@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrisBotManager.GUI", "IrisBotManager.GUI\IrisBotManager.GUI.csproj", "{F455A35C-414F-48C2-ADD5-8A4633797C5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrisBotManager.Core", "IrisBotManager.Core\IrisBotManager.Core.csproj", "{2BEE3391-8361-4E87-B075-362222A6A21A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{C8D5274F-AC00-46C7-1F8D-E88E81087A52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePlugins", "SamplePlugins", "{473866A7-6787-447E-915F-901BEEDD568E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplePlugins", "Plugins\SamplePlugins\SamplePlugins.csproj", "{F2979652-C694-41BB-80D8-CAEAFCFD564B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WeatherPlugin", "WeatherPlugin", "{51CEE727-6205-479F-AE00-AEFDDAFEC93D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherPlugin", "Plugins\WeatherPlugin\WeatherPlugin.csproj", "{FA8C0779-7C93-403F-9D4A-29F2194FDAA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F455A35C-414F-48C2-ADD5-8A4633797C5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F455A35C-414F-48C2-ADD5-8A4633797C5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F455A35C-414F-48C2-ADD5-8A4633797C5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F455A35C-414F-48C2-ADD5-8A4633797C5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BEE3391-8361-4E87-B075-362222A6A21A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BEE3391-8361-4E87-B075-362222A6A21A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BEE3391-8361-4E87-B075-362222A6A21A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BEE3391-8361-4E87-B075-362222A6A21A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2979652-C694-41BB-80D8-CAEAFCFD564B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2979652-C694-41BB-80D8-CAEAFCFD564B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2979652-C694-41BB-80D8-CAEAFCFD564B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2979652-C694-41BB-80D8-CAEAFCFD564B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA8C0779-7C93-403F-9D4A-29F2194FDAA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA8C0779-7C93-403F-9D4A-29F2194FDAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA8C0779-7C93-403F-9D4A-29F2194FDAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA8C0779-7C93-403F-9D4A-29F2194FDAA3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{473866A7-6787-447E-915F-901BEEDD568E} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
+		{F2979652-C694-41BB-80D8-CAEAFCFD564B} = {473866A7-6787-447E-915F-901BEEDD568E}
+		{51CEE727-6205-479F-AE00-AEFDDAFEC93D} = {C8D5274F-AC00-46C7-1F8D-E88E81087A52}
+		{FA8C0779-7C93-403F-9D4A-29F2194FDAA3} = {51CEE727-6205-479F-AE00-AEFDDAFEC93D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {20B4ECC0-B1BD-4EA5-A908-FF3D8F27005A}
+	EndGlobalSection
+EndGlobal

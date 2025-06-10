@@ -1,0 +1,434 @@
+﻿<Window x:Class="IrisBotManager.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="IrisBotManager" 
+        Width="550" Height="700"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True">
+
+    <Border Background="White" CornerRadius="8" BorderBrush="DarkGray" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"/>
+                <!-- 커스텀 타이틀바 -->
+                <RowDefinition Height="*"/>
+                <!-- 메인 컨텐츠 -->
+                <RowDefinition Height="25"/>
+                <!-- 상태바 -->
+            </Grid.RowDefinitions>
+
+            <!-- 커스텀 타이틀바 -->
+            <Border Grid.Row="0" Background="DarkSlateGray" CornerRadius="8,8,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 아이콘 및 제목 -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" 
+                               VerticalAlignment="Center" Margin="10,0">
+                        <TextBlock Text="🤖" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="IrisBotManager" Foreground="White" 
+                                  FontWeight="Bold" Margin="5,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- 드래그 영역 -->
+                    <Border Grid.Column="1" Background="Transparent" 
+                           MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"/>
+
+                    <!-- 창 제어 버튼 -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button Name="MinimizeButton" Content="─" 
+                               Width="30" Height="25" Background="Transparent" 
+                               Foreground="White" BorderThickness="0"
+                               Click="MinimizeButton_Click"/>
+                        <Button Name="CloseButton" Content="✕" 
+                               Width="30" Height="25" Background="Transparent" 
+                               Foreground="White" BorderThickness="0"
+                               Click="CloseButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 메인 컨텐츠 영역 -->
+            <TabControl Grid.Row="1" Name="MainTabControl" 
+                       BorderThickness="0" Background="Transparent">
+
+                <!-- 연결 탭 -->
+                <TabItem Header="🔌 연결">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 연결 설정 -->
+                        <GroupBox Grid.Row="0" Header="서버 연결" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,5,0">
+                                    <Label Content="Host:" FontSize="10"/>
+                                    <TextBox Name="HostBox" Height="25" FontSize="11"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Grid.Row="0" Margin="5,0,0,0">
+                                    <Label Content="Port:" FontSize="10"/>
+                                    <TextBox Name="PortBox" Height="25" FontSize="11"/>
+                                </StackPanel>
+
+                                <Button Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" 
+                                       Content="저장 및 연결" Name="SaveButton" Height="25" 
+                                       Margin="0,5,0,0" Click="SaveButton_Click"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- 방 목록 -->
+                        <GroupBox Grid.Row="1" Header="채팅방" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox Grid.Column="0" Name="RoomDropdown" Height="25"/>
+                                <Button Grid.Column="1" Content="새로고침" 
+                                       Name="RefreshButton" Height="25" Width="60" Margin="5,0,0,0"
+                                       Click="RefreshButton_Click"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- 메시지 전송 -->
+                        <GroupBox Grid.Row="2" Header="메시지 전송" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBox Grid.Row="0" Name="MessageBox" Height="25" Margin="0,0,0,5"/>
+                                <Button Grid.Row="1" Content="전송" Name="SendButton" 
+                                       Height="25" Click="SendButton_Click"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- 로그 -->
+                        <GroupBox Grid.Row="3" Header="로그">
+                            <TextBox Name="ConnectionLogBox" IsReadOnly="True" 
+                                    TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                    FontSize="10"/>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <!-- 메시지 탭 -->
+                <TabItem Header="💬 메시지">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 메시지 로그 -->
+                        <GroupBox Grid.Row="0" Header="수신된 메시지" Margin="0,0,0,10">
+                            <TextBox Name="MessageLogBox" IsReadOnly="True" 
+                                    TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                    FontSize="10" FontFamily="Consolas"/>
+                        </GroupBox>
+
+                        <!-- 제어 버튼 -->
+                        <GroupBox Grid.Row="1" Header="제어">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="로그 지우기" Name="ClearLogButton" 
+                                       Width="80" Click="ClearLogButton_Click"/>
+                                <CheckBox Name="AutoScrollCheckBox" Content="자동 스크롤" 
+                                         IsChecked="True" VerticalAlignment="Center" Margin="10,0"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <!-- 플러그인 탭 -->
+                <TabItem Header="🧩 플러그인" Name="PluginTab">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="150"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 상단 컨트롤 바 -->
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- 검색 및 필터 -->
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <TextBox Name="PluginSearchBox" Width="150" Height="25" 
+                                        ToolTip="플러그인 이름으로 검색"
+                                        TextChanged="PluginSearchBox_TextChanged"/>
+
+                                <ComboBox Name="CategoryFilterComboBox" Width="100" Height="25" 
+                                         Margin="5,0,0,0" SelectionChanged="CategoryFilterComboBox_SelectionChanged">
+                                    <ComboBoxItem Content="전체 카테고리" IsSelected="True"/>
+                                </ComboBox>
+                                <CheckBox Name="ShowEnabledOnlyCheckBox" Content="활성화된 것만" 
+                                         VerticalAlignment="Center" Margin="10,0,0,0"
+                                         Checked="ShowEnabledOnlyCheckBox_Changed" 
+                                         Unchecked="ShowEnabledOnlyCheckBox_Changed"/>
+                            </StackPanel>
+
+                            <!-- 전역 제어 버튼 -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="전체 활성화" Name="EnableAllButton" 
+                                       Width="80" Height="25" Click="EnableAllButton_Click"/>
+                                <Button Content="전체 비활성화" Name="DisableAllButton" 
+                                       Width="100" Height="25" Margin="5,0" Click="DisableAllButton_Click"/>
+                                <Button Content="새로고침" Name="PluginRefreshButton" 
+                                       Width="60" Height="25" Margin="5,0" Click="PluginRefreshButton_Click"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 플러그인 목록 - 크기 문제 해결을 위한 수정된 버전 -->
+                        <GroupBox Grid.Row="1" Header="플러그인 목록" Margin="0,0,0,10" 
+          MinHeight="200" Background="LightYellow">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto" 
+                  HorizontalScrollBarVisibility="Disabled"
+                  Background="LightGray"
+                  MinHeight="180">
+                                <StackPanel Name="PluginListPanel" 
+                   Orientation="Vertical" 
+                   Background="White"
+                   MinHeight="50">
+                                    <!-- 디버깅용 임시 내용 -->
+                                    <TextBlock Text="플러그인 로딩 중..." 
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Center"
+                      FontStyle="Italic" 
+                      Margin="20"
+                      Background="Pink"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </GroupBox>
+
+                        <!-- 하단 제어 버튼 -->
+                        <GroupBox Grid.Row="2" Header="제어" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="플러그인 폴더" Name="OpenFolderButton" 
+                                       Width="100" Click="OpenFolderButton_Click"/>
+                                <Button Content="방별 설정" Name="RoomSettingsButton" 
+                                       Width="80" Margin="5,0" Click="RoomSettingsButton_Click"/>
+                                <Button Content="설정 내보내기" Name="ExportSettingsButton" 
+                                       Width="90" Margin="5,0" Click="ExportSettingsButton_Click"/>
+                                <Button Content="설정 가져오기" Name="ImportSettingsButton" 
+                                       Width="90" Margin="5,0" Click="ImportSettingsButton_Click"/>
+                                <CheckBox Name="AutoScanCheckBox" Content="자동 스캔" 
+                                         IsChecked="True" VerticalAlignment="Center" Margin="10,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- 하단 정보 탭 -->
+                        <GroupBox Grid.Row="3" Header="정보">
+                            <TabControl Name="PluginInfoTabControl" FontSize="10">
+                                <!-- 통계 탭 -->
+                                <TabItem Header="📊 통계">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- 플러그인 통계 -->
+                                        <StackPanel Grid.Column="0" Margin="5">
+                                            <TextBlock Text="📦 플러그인" FontWeight="Bold" Margin="0,0,0,5"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="전체: " Width="50"/>
+                                                <TextBlock Name="TotalPluginsText" Text="0" FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="활성화: " Width="50"/>
+                                                <TextBlock Name="EnabledPluginsText" Text="0" FontWeight="Bold" Foreground="Green"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="비활성화: " Width="50"/>
+                                                <TextBlock Name="DisabledPluginsText" Text="0" FontWeight="Bold" Foreground="Red"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <!-- 카테고리 통계 -->
+                                        <StackPanel Grid.Column="1" Margin="5">
+                                            <TextBlock Text="🏷️ 카테고리" FontWeight="Bold" Margin="0,0,0,5"/>
+                                            <ItemsControl Name="CategoryStatsPanel">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Key}" Width="80"/>
+                                                            <TextBlock Text="{Binding Value}" FontWeight="Bold"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+
+                                        <!-- 방 통계 -->
+                                        <StackPanel Grid.Column="2" Margin="5">
+                                            <TextBlock Text="🏠 방별 설정" FontWeight="Bold" Margin="0,0,0,5"/>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="전체 방: " Width="70"/>
+                                                <TextBlock Name="TotalRoomsText" Text="0" FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="설정된 방: " Width="70"/>
+                                                <TextBlock Name="ConfiguredRoomsText" Text="0" FontWeight="Bold" Foreground="Blue"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </TabItem>
+
+                                <!-- 스캔 결과 탭 -->
+                                <TabItem Header="🔍 스캔결과">
+                                    <TextBox Name="ScanResultTextBox" 
+                                            IsReadOnly="True" 
+                                            TextWrapping="Wrap" 
+                                            VerticalScrollBarVisibility="Auto"
+                                            FontSize="9" 
+                                            FontFamily="Consolas"/>
+                                </TabItem>
+
+                                <!-- 로그 탭 -->
+                                <TabItem Header="📝 로그">
+                                    <TextBox Name="PluginLogTextBox" 
+                                            IsReadOnly="True" 
+                                            TextWrapping="Wrap" 
+                                            VerticalScrollBarVisibility="Auto"
+                                            FontSize="9" 
+                                            FontFamily="Consolas"/>
+                                </TabItem>
+                            </TabControl>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+                <!-- MainWindow.xaml의 관리자 탭 수정 -->
+                <TabItem Header="⚙️ 관리자" Name="AdminTab">
+                    <Grid Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- PIN 표시 -->
+                        <GroupBox Grid.Row="0" Header="현재 PIN" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Name="PinDisplay" Text="------" 
+                          FontSize="24" FontWeight="Bold" 
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          Foreground="Blue"/>
+                                <Button Grid.Column="1" Content="새 PIN" Name="NewPinButton" 
+                       Width="60" Height="30" Margin="5,0" Click="NewPinButton_Click"/>
+                                <Button Grid.Column="2" Content="사용법" Name="UsageGuideButton" 
+                       Width="60" Height="30" Click="UsageGuideButton_Click"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- 채팅 명령어 안내 -->
+                        <GroupBox Grid.Row="1" Header="채팅 명령어로 관리하세요" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock TextWrapping="Wrap" Margin="5">
+                    <Run Text="💬 이제 채팅방에서 직접 관리자 등록이 가능합니다!" FontWeight="Bold"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="👑 자신을 관리자로 등록:" FontWeight="Bold"/>
+                    <LineBreak/>
+                    <Run Text="    !관리자등록 " FontFamily="Consolas" Background="LightYellow"/>
+                    <Run Text="[위의 PIN번호]" FontStyle="Italic" Foreground="Blue"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="📋 기타 명령어:" FontWeight="Bold"/>
+                    <LineBreak/>
+                    <Run Text="    !관리자목록 [PIN]" FontFamily="Consolas" Background="LightGray"/>
+                    <LineBreak/>
+                    <Run Text="    !관리자삭제 [대상자ID] [PIN]" FontFamily="Consolas" Background="LightGray"/>
+                    <LineBreak/>
+                    <Run Text="    !관리자도움말" FontFamily="Consolas" Background="LightGray"/>
+                                </TextBlock>
+
+                                <Border Background="LightBlue" Padding="10" Margin="5" CornerRadius="5">
+                                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="💡 사용법:" FontWeight="Bold"/>
+                        <LineBreak/>
+                        <Run Text="1. 위의 PIN 번호를 확인하세요"/>
+                        <LineBreak/>
+                        <Run Text="2. 채팅방에서 '!관리자등록 [PIN번호]' 입력"/>
+                        <LineBreak/>
+                        <Run Text="3. 봇이 자동으로 당신을 관리자로 등록합니다"/>
+                        <LineBreak/>
+                        <Run Text="4. 보안을 위해 사용 후 새 PIN이 자동 생성됩니다"/>
+                                    </TextBlock>
+                                </Border>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                                    <Button Content="📋 현재 관리자 확인" Name="CheckAdminButton" 
+                           Width="130" Height="30" Margin="5" Click="CheckAdminButton_Click"/>
+                                    <Button Content="📚 상세 도움말" Name="DetailedHelpButton" 
+                           Width="100" Height="30" Margin="5" Click="DetailedHelpButton_Click"/>
+                                    <Button Content="🔄 PIN 복사" Name="CopyPinButton" 
+                           Width="80" Height="30" Margin="5" Click="CopyPinButton_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- 로그 및 결과 -->
+                        <GroupBox Grid.Row="2" Header="관리자 활동 로그">
+                            <TextBox Name="AdminResultBox" IsReadOnly="True" 
+                    TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                    FontSize="10" FontFamily="Consolas"/>
+                        </GroupBox>
+                    </Grid>
+                </TabItem>
+
+            </TabControl>
+
+            <!-- 상태바 -->
+            <Border Grid.Row="2" Background="LightGray" CornerRadius="0,0,8,8">
+                <Grid>
+                    <TextBlock Name="StatusText" Text="준비" 
+                              VerticalAlignment="Center" Margin="10,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0">
+                        <TextBlock Name="ConnectionStatus" Text="연결 안됨" 
+                                  VerticalAlignment="Center"/>
+                        <TextBlock Text=" | PIN: " VerticalAlignment="Center"/>
+                        <TextBlock Name="CurrentPin" Text="------" 
+                                  VerticalAlignment="Center" FontWeight="Bold"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

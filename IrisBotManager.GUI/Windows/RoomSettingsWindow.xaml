@@ -1,0 +1,209 @@
+﻿<Window x:Class="IrisBotManager.GUI.Windows.RoomSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="방별 플러그인 설정" 
+        Width="650" Height="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        MinWidth="600" MinHeight="500">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 상단 방 선택 및 정보 -->
+        <GroupBox Grid.Row="0" Header="🏠 방 선택" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- 방 선택 -->
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="방 선택:" 
+                          VerticalAlignment="Center" Margin="0,0,10,0" FontWeight="Bold"/>
+                <ComboBox Grid.Column="1" Grid.Row="0" Name="RoomSelectionComboBox" 
+                         Height="30" SelectionChanged="RoomSelectionComboBox_SelectionChanged"
+                         FontSize="12"/>
+                <Button Grid.Column="2" Grid.Row="0" Content="🔄 새로고침" 
+                       Name="RefreshRoomsButton" Width="80" Height="30" 
+                       Margin="10,0,0,0" Click="RefreshRoomsButton_Click"/>
+
+                <!-- 방 정보 표시 -->
+                <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" 
+                       Background="LightBlue" CornerRadius="5" Padding="10" Margin="0,10,0,5">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="📍 현재 방: " FontWeight="Bold"/>
+                            <TextBlock Name="CurrentRoomNameLabel" Text="방을 선택하세요" 
+                                      FontWeight="Bold" Foreground="DarkBlue"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📊 활성화된 플러그인: "/>
+                            <TextBlock Name="ConfiguredPluginsCountLabel" Text="0" 
+                                      FontWeight="Bold" Foreground="Green"/>
+                            <TextBlock Text="개"/>
+
+                            <TextBlock Text=" | 🔧 설정 가능한 플러그인: " Margin="20,0,0,0"/>
+                            <TextBlock Name="TotalPluginsCountLabel" Text="0" 
+                                      FontWeight="Bold" Foreground="Blue"/>
+                            <TextBlock Text="개"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 상태 표시 -->
+                <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" 
+                           Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+                    <Border Background="LightGray" CornerRadius="3" Padding="5,2" Margin="0,0,5,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="Gray" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                            <TextBlock Text="전역 비활성화" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="LightYellow" CornerRadius="3" Padding="5,2" Margin="0,0,5,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="Orange" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                            <TextBlock Text="방별 비활성화" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="LightGreen" CornerRadius="3" Padding="5,2">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="Green" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                            <TextBlock Text="활성화" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- 플러그인 설정 목록 -->
+        <GroupBox Grid.Row="1" Header="🧩 플러그인별 설정" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 필터 및 도구모음 -->
+                <Border Grid.Row="0" Background="WhiteSmoke" Padding="10,5" Margin="0,0,0,5">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🔍 필터:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <ComboBox Name="CategoryFilterComboBox" Width="120" Height="25" 
+                                 SelectionChanged="CategoryFilterComboBox_SelectionChanged">
+                            <ComboBoxItem Content="모든 카테고리" IsSelected="True"/>
+                        </ComboBox>
+
+                        <CheckBox Name="ShowEnabledOnlyCheckBox" Content="활성화된 것만" 
+                                 VerticalAlignment="Center" Margin="15,0,0,0"
+                                 Checked="ShowEnabledOnlyCheckBox_Changed" 
+                                 Unchecked="ShowEnabledOnlyCheckBox_Changed"/>
+
+                        <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" 
+                                  Margin="15,0,15,0"/>
+
+                        <Button Content="🔧 전체 활성화" Name="EnableAllButton" 
+                               Width="110" Height="25" Click="EnableAllButton_Click"/>
+                        <Button Content="⏸️ 전체 비활성화" Name="DisableAllButton" 
+                               Width="110" Height="25" Margin="5,0" Click="DisableAllButton_Click"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- 플러그인 목록 스크롤뷰 -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" 
+                             HorizontalScrollBarVisibility="Disabled"
+                             Background="White">
+                    <StackPanel Name="RoomPluginSettingsPanel" 
+                               Orientation="Vertical" 
+                               Background="Transparent">
+                        <!-- 플러그인 컨트롤들이 동적으로 추가됨 -->
+
+                        <!-- 기본 상태 표시 (플러그인이 없을 때) -->
+                        <Border Name="NoPluginsMessage" 
+                               Background="LightGray" 
+                               CornerRadius="5" 
+                               Padding="20" 
+                               Margin="20"
+                               Visibility="Collapsed">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="🔍" FontSize="24" HorizontalAlignment="Center" 
+                                          Margin="0,0,0,10"/>
+                                <TextBlock Text="표시할 플러그인이 없습니다" 
+                                          FontSize="14" FontWeight="Bold" 
+                                          HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                                <TextBlock Text="다른 필터를 선택하거나 방을 변경해보세요" 
+                                          FontSize="11" Foreground="Gray" 
+                                          HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 로딩 상태 표시 -->
+                        <Border Name="LoadingMessage" 
+                               Background="LightBlue" 
+                               CornerRadius="5" 
+                               Padding="20" 
+                               Margin="20"
+                               Visibility="Collapsed">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="⏳" FontSize="24" HorizontalAlignment="Center" 
+                                          Margin="0,0,0,10"/>
+                                <TextBlock Text="플러그인 목록 로드 중..." 
+                                          FontSize="14" FontWeight="Bold" 
+                                          HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </GroupBox>
+
+        <!-- 하단 제어 버튼 -->
+        <GroupBox Grid.Row="2" Header="🛠️ 제어">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 좌측 작업 버튼들 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Button Content="📋 다른 방에서 복사" Name="CopyFromRoomButton" 
+                           Width="125" Height="32" Margin="0,0,5,0"
+                           Click="CopyFromRoomButton_Click"/>
+                    <Button Content="🗑️ 초기화" Name="ResetSettingsButton" 
+                           Width="80" Height="32" Margin="0,0,5,0"
+                           Click="ResetSettingsButton_Click"/>
+                    <Button Content="💾 설정 내보내기" Name="ExportSettingsButton" 
+                           Width="110" Height="32" Margin="0,0,5,0"
+                           Click="ExportSettingsButton_Click"/>
+                    <Button Content="📂 설정 가져오기" Name="ImportSettingsButton" 
+                           Width="110" Height="32"
+                           Click="ImportSettingsButton_Click"/>
+                </StackPanel>
+
+                <!-- 우측 제어 버튼들 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="💾 저장" Name="SaveButton" 
+                           Width="60" Height="32" Margin="0,0,10,0"
+                           Click="SaveButton_Click" FontWeight="Bold"
+                           Background="LightBlue"/>
+                    <Button Content="❌ 닫기" Name="CloseButton" 
+                           Width="60" Height="32" IsDefault="True"
+                           Click="CloseButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

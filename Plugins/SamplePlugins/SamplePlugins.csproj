@@ -1,0 +1,77 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<!-- GUI 프로젝트의 출력 폴더 내 plugins 디렉토리로 출력 -->
+		<OutputPath>..\..\IrisBotManager.GUI\bin\Debug\net9.0-windows\plugins\</OutputPath>
+		<!-- 의존성 DLL들도 함께 복사 -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<!-- PDB 파일도 복사 (디버깅용) -->
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Google.Apis.Gmail.v1" Version="1.69.0.3742" />
+		<PackageReference Include="Google.Apis.Auth" Version="1.69.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\IrisBotManager.Core\IrisBotManager.Core.csproj">
+			<!-- Core 프로젝트는 복사하지 않음 (GUI에서 이미 로드됨) -->
+			<Private>false</Private>
+		</ProjectReference>
+	</ItemGroup>
+
+	<!-- 빌드 후 이벤트: 필요한 파일들을 plugins 폴더로 복사 -->
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<ItemGroup>
+			<!-- 현재 프로젝트의 출력 DLL -->
+			<PluginFiles Include="$(OutputPath)SamplePlugins.dll" />
+			<PluginFiles Include="$(OutputPath)SamplePlugins.pdb" Condition="Exists('$(OutputPath)SamplePlugins.pdb')" />
+
+			<!-- Google APIs 의존성 -->
+			<PluginFiles Include="$(OutputPath)Google.*.dll" />
+			<PluginFiles Include="$(OutputPath)Newtonsoft.Json.dll" />
+		</ItemGroup>
+
+		<!-- plugins 폴더가 없으면 생성 -->
+		<MakeDir Directories="$(OutputPath)" Condition="!Exists('$(OutputPath)')" />
+
+		<!-- 파일들 복사 -->
+		<Message Text="플러그인 파일들을 복사 중..." Importance="high" />
+		<Message Text="출력 경로: $(OutputPath)" Importance="high" />
+
+		<Copy SourceFiles="@(PluginFiles)"
+			  DestinationFolder="$(OutputPath)"
+			  SkipUnchangedFiles="true"
+			  Condition="Exists('%(PluginFiles.FullPath)')" />
+	</Target>
+
+	<!-- 실행 시점 plugins 폴더로도 복사 (디버깅용) -->
+	<Target Name="CopyToRuntimePlugins" AfterTargets="PostBuildEvent">
+		<PropertyGroup>
+			<RuntimePluginsPath>..\..\IrisBotManager.GUI\bin\Debug\net9.0-windows\plugins\</RuntimePluginsPath>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<RuntimePluginFiles Include="$(OutputPath)SamplePlugins.dll" />
+			<RuntimePluginFiles Include="$(OutputPath)SamplePlugins.pdb" Condition="Exists('$(OutputPath)SamplePlugins.pdb')" />
+			<RuntimePluginFiles Include="$(OutputPath)Google.*.dll" />
+			<RuntimePluginFiles Include="$(OutputPath)Newtonsoft.Json.dll" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(RuntimePluginsPath)" Condition="!Exists('$(RuntimePluginsPath)')" />
+
+		<Copy SourceFiles="@(RuntimePluginFiles)"
+			  DestinationFolder="$(RuntimePluginsPath)"
+			  SkipUnchangedFiles="true"
+			  Condition="Exists('%(RuntimePluginFiles.FullPath)')" />
+
+		<Message Text="플러그인이 런타임 폴더로 복사되었습니다: $(RuntimePluginsPath)" Importance="high" />
+	</Target>
+
+</Project>

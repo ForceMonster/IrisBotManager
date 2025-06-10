@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="IrisBotManager.GUI.Controls.PluginItemControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="PluginItemRoot">
+
+    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="5" 
+            Margin="2" Padding="10" Background="White">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 체크박스 -->
+            <CheckBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" 
+                     Name="EnabledCheckBox" 
+                     VerticalAlignment="Center" 
+                     Margin="0,0,15,0"
+                     FontSize="14"
+                     Checked="EnabledCheckBox_CheckedChanged"
+                     Unchecked="EnabledCheckBox_CheckedChanged"/>
+
+            <!-- 플러그인 정보 -->
+            <StackPanel Grid.Column="1" Grid.Row="0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Name="PluginNameLabel" FontWeight="Bold" FontSize="14"/>
+                    <Border Background="LightBlue" CornerRadius="3" Padding="3,1" Margin="10,0,5,0">
+                        <TextBlock Name="CategoryLabel" FontSize="9" Foreground="DarkBlue"/>
+                    </Border>
+                    <Border Background="LightGreen" CornerRadius="3" Padding="3,1" Margin="0,0,5,0">
+                        <TextBlock Name="VersionLabel" FontSize="9" Foreground="DarkGreen"/>
+                    </Border>
+                    <Border Name="RequiredRoleBorder" Background="Orange" CornerRadius="3" Padding="3,1">
+                        <TextBlock Name="RequiredRoleLabel" FontSize="9" Foreground="White"/>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 설명 -->
+            <TextBlock Grid.Column="1" Grid.Row="1" 
+                      Name="DescriptionLabel" 
+                      FontSize="11" 
+                      Foreground="Gray" 
+                      TextWrapping="Wrap" 
+                      Margin="0,3,0,0"/>
+
+            <!-- 파일 경로 및 상태 -->
+            <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" Margin="0,3,0,0">
+                <TextBlock Text="📁" FontSize="10"/>
+                <TextBlock Name="FilePathLabel" FontSize="10" Foreground="DarkGray" Margin="5,0,15,0"/>
+                <TextBlock Text="🏠" FontSize="10"/>
+                <TextBlock Name="UsageLabel" FontSize="10" Foreground="Blue" Margin="5,0"/>
+            </StackPanel>
+
+            <!-- 버튼들 -->
+            <StackPanel Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" 
+                       Orientation="Vertical" VerticalAlignment="Center">
+                <Button Name="HelpButton" Content="?" 
+                       Width="25" Height="25" FontSize="12" 
+                       ToolTip="플러그인 도움말"
+                       Click="HelpButton_Click" Margin="0,0,0,5"/>
+                <Button Name="SettingsButton" Content="⚙️" 
+                       Width="25" Height="25" FontSize="10" 
+                       ToolTip="플러그인 설정"
+                       Click="SettingsButton_Click" Margin="0,0,0,5"/>
+                <Button Name="RoomSettingsButton" Content="🏠" 
+                       Width="25" Height="25" FontSize="10" 
+                       ToolTip="방별 설정"
+                       Click="RoomSettingsButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

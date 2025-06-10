@@ -1,0 +1,97 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>WeatherPlugin</AssemblyName>
+		<RootNamespace>SamplePlugins</RootNamespace>
+		<!-- GUI 프로젝트의 출력 폴더 내 plugins 디렉토리로 출력 -->
+		<OutputPath>..\..\IrisBotManager.GUI\bin\Debug\net9.0-windows\plugins\</OutputPath>
+		<!-- 의존성 DLL들도 함께 복사 -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<!-- PDB 파일도 복사 (디버깅용) -->
+		<DebugType>embedded</DebugType>
+		<!-- 플러그인 정보 -->
+		<Product>Weather Information Plugin</Product>
+		<Description>지역별 날씨 정보를 제공하는 IrisBotManager 플러그인</Description>
+		<Version>1.0.0</Version>
+		<Authors>IrisBotManager</Authors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- WeatherBot은 .NET 기본 라이브러리만 사용하므로 추가 패키지 불필요 -->
+		<!-- System.Text.Json, HttpClient, Regex 등은 .NET 9.0에 기본 포함 -->
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\IrisBotManager.Core\IrisBotManager.Core.csproj">
+			<!-- Core 프로젝트는 복사하지 않음 (GUI에서 이미 로드됨) -->
+			<Private>false</Private>
+		</ProjectReference>
+	</ItemGroup>
+
+	<!-- 빌드 후 이벤트: 필요한 파일들을 plugins 폴더로 복사 -->
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<ItemGroup>
+			<!-- 현재 프로젝트의 출력 DLL -->
+			<PluginFiles Include="$(OutputPath)WeatherPlugin.dll" />
+			<PluginFiles Include="$(OutputPath)WeatherPlugin.pdb" Condition="Exists('$(OutputPath)WeatherPlugin.pdb')" />
+			<!-- WeatherPlugin은 외부 의존성이 없으므로 .NET 기본 라이브러리만 사용 -->
+		</ItemGroup>
+
+		<!-- plugins 폴더가 없으면 생성 -->
+		<MakeDir Directories="$(OutputPath)" Condition="!Exists('$(OutputPath)')" />
+
+		<!-- 파일들 복사 -->
+		<Message Text="WeatherPlugin 파일들을 복사 중..." Importance="high" />
+		<Message Text="출력 경로: $(OutputPath)" Importance="high" />
+		<Copy SourceFiles="@(PluginFiles)"
+			  DestinationFolder="$(OutputPath)"
+			  SkipUnchangedFiles="true"
+			  Condition="Exists('%(PluginFiles.FullPath)')" />
+	</Target>
+
+	<!-- 실행 시점 plugins 폴더로도 복사 (디버깅용) -->
+	<Target Name="CopyToRuntimePlugins" AfterTargets="PostBuildEvent">
+		<PropertyGroup>
+			<RuntimePluginsPath>..\..\IrisBotManager.GUI\bin\Debug\net9.0-windows\plugins\</RuntimePluginsPath>
+		</PropertyGroup>
+		<ItemGroup>
+			<RuntimePluginFiles Include="$(OutputPath)WeatherPlugin.dll" />
+			<RuntimePluginFiles Include="$(OutputPath)WeatherPlugin.pdb" Condition="Exists('$(OutputPath)WeatherPlugin.pdb')" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(RuntimePluginsPath)" Condition="!Exists('$(RuntimePluginsPath)')" />
+		<Copy SourceFiles="@(RuntimePluginFiles)"
+			  DestinationFolder="$(RuntimePluginsPath)"
+			  SkipUnchangedFiles="true"
+			  Condition="Exists('%(RuntimePluginFiles.FullPath)')" />
+		<Message Text="WeatherPlugin이 런타임 폴더로 복사되었습니다: $(RuntimePluginsPath)" Importance="high" />
+	</Target>
+
+	<!-- Release 빌드 시 최적화 -->
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+		<Optimize>true</Optimize>
+		<OutputPath>..\..\IrisBotManager.GUI\bin\Release\net9.0-windows\plugins\</OutputPath>
+	</PropertyGroup>
+
+	<!-- Release 빌드용 복사 타겟 -->
+	<Target Name="CopyToReleasePlugins" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='Release'">
+		<PropertyGroup>
+			<ReleasePluginsPath>..\..\IrisBotManager.GUI\bin\Release\net9.0-windows\plugins\</ReleasePluginsPath>
+		</PropertyGroup>
+		<ItemGroup>
+			<ReleasePluginFiles Include="$(OutputPath)WeatherPlugin.dll" />
+		</ItemGroup>
+
+		<MakeDir Directories="$(ReleasePluginsPath)" Condition="!Exists('$(ReleasePluginsPath)')" />
+		<Copy SourceFiles="@(ReleasePluginFiles)"
+			  DestinationFolder="$(ReleasePluginsPath)"
+			  SkipUnchangedFiles="true"
+			  Condition="Exists('%(ReleasePluginFiles.FullPath)')" />
+		<Message Text="WeatherPlugin Release 버전이 복사되었습니다: $(ReleasePluginsPath)" Importance="high" />
+	</Target>
+</Project>
